@@ -1,0 +1,11 @@
+{
+  "name": "min-lodash",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {},
+  "devDependencies": {},
+  "dependencies": {
+    "jest": "^27.0.5",
+    "typescript": "^4.3.4"
+  }
+}

@@ -96,11 +96,11 @@ function isEar(ear) {
 }
 
 // create a circular doubly linked list from polygon points in the specified winding order
-// 创建双向循环链表， 没有对data做排序，所以如果传入的数据不是规则的闭合多边形，可能会有问题？
+// 创建双向循环链表， 没有对data做排序，所以如果传入的数据不是规则的闭合多边形，需要更复杂的处理方式，
 function linkedList(data, start, end, dim, clockwise) {
   var i, last;
 
-  // 根据signAreas的值 来确定链表的插入顺序，有什么用不知道
+  // 根据signAreas的值 来确定输入的点是顺时针/逆时针方向，
   if (clockwise === (signedArea(data, start, end, dim) > 0)) {
       for (i = start; i < end; i += dim) last = insertNode(i, data[i], data[i + 1], last);
   } else {
