@@ -1,0 +1,25 @@
+{
+  "name": "chao-cli",
+  "version": "1.0.0",
+  "description": "",
+  "bin": {
+    "cc": "./bin/cli.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "axios": "^0.21.1",
+    "chalk": "^4.1.1",
+    "commander": "^8.0.0",
+    "cross-spawn": "^7.0.3",
+    "inquirer": "^8.1.2",
+    "ora": "^5.4.1",
+    "spinner": "^0.3.4",
+    "vue": "^2.6.14",
+    "vue-router": "^3.5.2",
+    "vuex": "^3.6.2"
+  }
+}
