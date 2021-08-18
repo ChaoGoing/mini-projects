@@ -19,6 +19,7 @@ class RequestParser extends Events{
   };
 
   append(buffer) {
+    console.log('buffer', buffer)
     for(let offset = 0; offset < buffer.length; offset++) {
       this._state = this._state(buffer[offset])
     }

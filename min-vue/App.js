@@ -1,13 +1,12 @@
 import {reactive} from './core/reactivity/index.js'
-import {h} from './core/h.js'
 
 export const App = {
-  render(content) {
-    return h('div', { testId: content.state.testId },[
-      h('div', {}, content.state.title),
-      h('div', {}, content.state.content),
+  render(h) {
+    return h('div', { testId: this.state.testId },[
+      h('div', {}, this.state.title),
+      h('div', {}, this.state.content),
       h('button',{
-        onClick: content.onClick
+        onClick: this.onClick
       },'click')
     ])
   },

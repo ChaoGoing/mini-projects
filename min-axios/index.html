@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <button onclick="clickEvent()">click</button>
+  <script type="module">
+    import axios from './axios.js'
+    // const instance = axios.create({
+    //   method: 'get',
+    //   url: 'http://localhost:8081'
+    // })
+    window.clickEvent = function() {
+      axios({ 
+        url: 'http://localhost:8081/1.text',
+        method: 'get',
+      }).then(res => {
+        console.log(res)
+      })
+      axios.get('http://localhost:8081/1.text').then(res => {
+        console.log('get2', res)
+      })
+    }
+  </script>
+  <!-- <script type="module" src="index.js"></script> -->
+</body>
+</html>

@@ -39,9 +39,6 @@ export const mountElement = (vnode, container) => {
 export const diff = (v1, v2) => {
   const { props: oldProps, children: oldChildren = [] } = v1
   const { props: newProps, children: newChildren = [] } = v2
-
-  
-
   if(v1.tag !== v2.tag) {
     v1.el.replaceWith(createElement(v2.tag))
     Object.keys(v2.props).forEach(key => {
