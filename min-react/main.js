@@ -12,7 +12,10 @@ class MyComponent extends Component{
     return (
       <div>
         <div>{this.state.a}</div>
-        <div onclick={() => { console.log(this.state.a); self.setState({ a: ++this.state.a }) }}>666</div>
+        <div onclick={() => { 
+          console.log(this.state.a); 
+          self.setState({ a: ++this.state.a }) 
+          }}>666</div>
         {this.children}
       </div>
     )

@@ -5,9 +5,9 @@ const traverse = require('@babel/traverse').default;
 const babel = require('@babel/core');
 
 const moduleAnalyser = filename => {
-  // const path = path.join(__dirname, filename);
+  const _path = path.resolve(__dirname, filename);
   // console.log(path)
-  const content = fs.readFileSync(filename, 'utf8');
+  const content = fs.readFileSync(_path, 'utf8');
   const ast = parser.parse(content, {sourceType: "module"});
   // console.log(ast.program.body)
   // console.log(content);
@@ -54,8 +54,8 @@ const generateDependencyGraph = (entry) => {
     }
   }
   // console.log(graphArray);
+  return graphArray
 }
-
 
 const generateCode = (entry) => {
   const graph = generateDependencyGraph(entry);
