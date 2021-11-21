@@ -36,7 +36,7 @@ function updateWorkInProgressHook() {
 
 export function useReducer(reducer, initState) {
   const hook = updateWorkInProgressHook()
-  console.log('hook', hook)
+  // console.log('hook', hook)
 
   // 初次渲染
   if(!currentlyRendingFiber.alternate) {

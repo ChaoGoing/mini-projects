@@ -1,5 +1,5 @@
 import { updateFuncComponent, updateHostComponent } from "./ReactFiberReconclie"
-import { getParentNode } from "./utils"
+import { getParentNode, Placement, Update, updateNode } from "./utils"
 
 let wipRoot = null
 let wip = null
@@ -13,7 +13,6 @@ export function scheduleUpdateOnFiber(fiber) {
 
 function perfomUnitOfWork() {
   // 处理当前任务
-  console.log("111", wip)
   const { type } = wip
   if(typeof type === 'string' || typeof type === 'number') {
     updateHostComponent(wip)
@@ -46,7 +45,7 @@ function workloop(IdleDeadline) {
     requestIdleCallback(workloop)
 
   }
-  console.log("wipRoot", wipRoot)
+  // console.log("wipRoot", wipRoot)
 
   if(!wip && wipRoot) {
     // console.log('commit root')
@@ -66,9 +65,12 @@ function commitWorker(_wip) {
   // console.log("commit", _wip)
   const { flags, stateNode } = _wip
   let parentNode = getParentNode(_wip.return)
-  // console.log("parne", parentNode, _wip)
-  if(stateNode) {
+  // console.log("commit", flags)
+  if(flags & Placement && stateNode) {
     parentNode.appendChild(stateNode)
+  }
+  if(flags & Update && stateNode) {
+    updateNode(stateNode, _wip.alternate.props, _wip.props)
   }
   commitWorker(_wip.child)
   commitWorker(_wip.sibling)
