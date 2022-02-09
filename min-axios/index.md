@@ -28,7 +28,31 @@ axios.interceptor.request.use(function(config){
 ```
 
 撤销请求cancellation
+```js
+const { CancelToken, isCancel } = axios;
+axios({
+  url: "http://localhost:5000/test1?delay=3000",
+  cancelToken: new CancelToken((c) => {
+      //c是一个函数，调用c就可以关闭本次请求
+      cancel = c;
+  }),
+})
 ```
+
+axios.all
+```js
+axios.all([
+  axios.get("http://localhost:5000/test1"),
+  axios.get("http://localhost:5000/test2?delay=3000"),
+  axios.get("http://localhost:5000/test3"),
+]).then(
+  (response) => {
+      console.log(response);
+  },
+  (error) => {
+      console.log(error);
+  }
+);
 
 ```
 
