@@ -1,0 +1,25 @@
+{
+  "name": "min-husky",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "bin": {
+    "minhusky": "./lib/bin.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "pnpm": "^6.30.1",
+    "commitlint": "^16.0.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.4.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+    "execa": "^6.0.0",
+    "jest": "^27.4.7",
+    "shelljs": "^0.8.5"
+  }
+}
