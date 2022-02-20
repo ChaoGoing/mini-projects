@@ -15,7 +15,7 @@ const moduleAnalyser = filename => {
   const dependencies = {};
   traverse(ast, {
     ImportDeclaration({ node }) {
-      // console.log(node)
+      // 拿到当前文件的文件夹前缀 './src/index.js' => './src'
       const dirname = path.dirname(filename);
       console.log("dirname", dirname)
       const newFile = './' + path.join(dirname, node.source.value);
@@ -75,7 +75,6 @@ const generateCode = (entry) => {
     require('${entry}');
   })(${JSON.stringify(graph)});
   `
-
 }
 
 const code = generateCode('./src/index.js')

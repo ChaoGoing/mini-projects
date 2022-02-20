@@ -3,7 +3,7 @@ class Test{
     console.log('this', JSON.stringify(this))
   }
   test() {
-    console.log(Test.log) // undefined!!!
+    console.log(this) 
     console.log('test')
   }
 }
@@ -13,7 +13,7 @@ Test.log = function() {
 }
 
 const t = new Test()
-t.test()
+t.test() // 实例Test{}
 Test.log()
 const tt = t.test
-tt()
+tt() // undefined!!!

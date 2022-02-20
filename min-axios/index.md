@@ -95,9 +95,17 @@ instance.interceptors.response.use(
 ### 源码解析
 
 axios.js
-```javascript
 
-``` 
+1.createInstance
+为了支持可以 axios(config) 的方式调用
+返回Axios.request, 并把Axios的方法拷贝到Axios.request上
+
+2.Interceptor类
+定义use 和 foreach
+
+3.Axios
+
+
 
 
 

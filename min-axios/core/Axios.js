@@ -6,7 +6,7 @@ class Axios {
     this.defaults = defaultConfigs || {}
     this.interceptors = {
       request: new Interceptor(),
-      Response: new Interceptor()
+      response: new Interceptor()
     }
   }
   
@@ -36,7 +36,7 @@ Axios.prototype.request = function(config) {
 
 
 ['post', 'put', 'patch'].forEach(method => {
-  Axios[method] = function(url, data = {}, config) {
+  Axios.prototype[method] = function(url, data = {}, config) {
     return this.request(Object.assign({
       method,
       url,
