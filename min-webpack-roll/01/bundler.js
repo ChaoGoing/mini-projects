@@ -6,6 +6,8 @@ const babel = require('@babel/core');
 
 const moduleAnalyser = filename => {
   const _path = path.resolve(__dirname, filename);
+  console.log('__dirname: ', __dirname);
+  console.log('_path: ', _path);
   // console.log(path)
   const content = fs.readFileSync(_path, 'utf8');
   const ast = parser.parse(content, {sourceType: "module"});
@@ -59,6 +61,7 @@ const generateDependencyGraph = (entry) => {
 
 const generateCode = (entry) => {
   const graph = generateDependencyGraph(entry);
+  console.log('graph: ', graph);
   return 
   `
   (function(graph){
