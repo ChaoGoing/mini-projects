@@ -5,7 +5,7 @@ const p = require('path');
 const cwd = process.cwd();
 
 exports.install = function(dir = '.minhusky') {
-    // Ensure that we're not trying to install outside of cwd
+  // Ensure that we're not trying to install outside of cwd
   if (!p.resolve(process.cwd(), dir).startsWith(process.cwd())) {
     throw new Error(`.. not allowed (see ${url})`)
   }
