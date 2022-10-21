@@ -1,0 +1,128 @@
+$nextedMarginLeft: 94px;
+
+.container {
+    position: relative;
+    font-size: 16px;
+    &:not(.nested):not(:last-child) {
+        border-bottom: 1px solid #e8e8e8;
+    }
+    &:not(.nested) {
+        padding: 40px 0;
+    }
+    &.nested {
+        margin-top: 44px;
+    }
+}
+
+.content {
+    max-height: 80px;
+    font-size: 28px;
+    font-family: PingFangSC-Regular, PingFang SC;
+    font-weight: 400;
+    color: #212121;
+    line-height: 40px;
+    margin-top: 24px;
+    margin-left: $nextedMarginLeft;
+
+    @include mutilLineTextEllipsis(2);
+}
+
+.colorPink {
+    color: #546c95;
+}
+
+/** header **/
+.header {
+    display: flex;
+    align-items: center;
+}
+
+.header .avatar {
+    width: 74px;
+    height: 74px;
+    overflow: hidden;
+    margin-right: 20px;
+}
+
+.info {
+    color: #a6a6a6;
+    flex: 1;
+    overflow: hidden;
+
+    .top {
+        font-size: 28px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        margin-bottom: 4px;
+        overflow: hidden;
+        .name {
+            @include ellipsis;
+        }
+        img {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            margin-left: 12px;
+        }
+    }
+    .sign {
+        font-size: 22px;
+    }
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    font-size: 26px;
+    font-weight: 400;
+    color: #707070;
+    line-height: 37px;
+    min-width: 250px;
+    justify-content: flex-end;
+    img {
+        width: 32px;
+        height: 32px;
+        vertical-align: text-top;
+        display: inline-block;
+        margin-right: 6px;
+    }
+}
+
+.divider {
+    display: inline-block;
+    width: 2px;
+    height: 24px;
+    background: #c4c4c4;
+    margin: 0 34px;
+}
+
+/** style when nested **/
+.nestedWrapper {
+    margin-left: $nextedMarginLeft;
+}
+.nested {
+    .content {
+        margin-left: 64px;
+        display: flex;
+        align-items: center;
+        max-height: 80px;
+        @include mutilLineTextEllipsis(2);
+    }
+    .name {
+        color: #a6a6a6;
+        @include ellipsis;
+        max-width: 112px;
+        vertical-align: bottom;
+    }
+    .header .avatar {
+        width: 44px;
+        height: 44px;
+    }
+}
+
+.time {
+    font-size: 22px;
+    color: #a6a6a6;
+    margin: 20px 0 0 $nextedMarginLeft;
+}
