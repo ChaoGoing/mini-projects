@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        background: linear-gradient(coral, rebeccapurple);
+        border: 10px solid white;
+        min-height: 100vh;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+      .grid {
+        flex: 0 0 auto;
+        perspective: 600px;
+        display: grid;
+        grid-template-columns: repeat(3, 150px);
+        grid-template-rows: repeat(3, 150px);
+        grid-gap: 20px;
+        max-width: 480px;
+        transform: rotate(45deg);
+      }
+      .grid > div {
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        padding: 20px;
+        color: transparent;
+        box-shadow: 30px 30px 30px -20px rgba(0, 0, 0, 0.6);
+        border-radius: 2px;
+      }
+      .grid div:nth-child(odd) {
+        animation: 1000ms ease-in-out infinite alternate pulse;
+      }
+      .grid div:nth-child(even) {
+        animation: 1000ms 1000ms ease-in-out infinite alternate pulse;
+      }
+
+      @keyframes pulse {
+        to {
+          transform: translate3d(0px, 0px, -60px);
+          box-shadow: 15px 15px 20px -20px rgba(0, 0, 0, 0.8);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="grid">
+      <div>1</div>
+      <div>2</div>
+      <div>3</div>
+      <div>4</div>
+      <div>5</div>
+      <div>6</div>
+      <div>7</div>
+      <div>8</div>
+      <div>9</div>
+    </div>
+  </body>
+</html>

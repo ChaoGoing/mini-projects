@@ -1,0 +1,21 @@
+{
+  "name": "min-umi-21days",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "typescript": "^5.0.4"
+  },
+  "devDependencies": {
+    "esbuild": "^0.17.17"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "pnpm -r --filter ./packages run build",
+    "dev": "pnpm -r --filter ./packages --parallel run dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "private": true
+}
