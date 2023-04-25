@@ -24645,6 +24645,9 @@ var dev = () => __async(void 0, null, function* () {
           entryPoints: [import_path.default.resolve(process.cwd(), DEFAULT_ENTRY_POINT)]
         }
       );
+      console.log(`
+        server run on ${DEFAULT_HOST}:${DEFAULT_BUILD_PORT}
+      `);
       process.on("SIGINT", () => {
         devServe.stop();
         process.exit(0);

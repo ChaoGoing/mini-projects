@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "ws": "^8.13.0"
   },
   "devDependencies": {
     "esbuild": "^0.17.17"
@@ -17,5 +18,11 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "private": true
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "packages/*",
+      "examples/*"
+    ]
+  }
 }
