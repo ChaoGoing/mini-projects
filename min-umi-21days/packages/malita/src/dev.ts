@@ -1,6 +1,6 @@
 import express from "express";
 import portfinder from "portfinder";
-import { ServeOnRequestArgs, serve } from "esbuild";
+import { build } from "esbuild";
 import {
   DEFAULT_BUILD_PORT,
   DEFAULT_ENTRY_POINT,
@@ -10,6 +10,8 @@ import {
   DEFAULT_PORT,
 } from "./constants";
 import path from "path";
+import { createServer } from "http";
+import { createWebSocketServer } from "./server";
 
 export const dev = async () => {
   const app = express();
@@ -36,41 +38,35 @@ export const dev = async () => {
     </html>`);
   });
 
-  app.listen(port, async () => {
+  const malitaServe = createServer(app);
+  const esbuildOutput = path.resolve(process.cwd(), DEFAULT_OUTDIR);
+  malitaServe.listen(port, async () => {
     try {
-      const devServe = await serve(
-        {
-          port: DEFAULT_BUILD_PORT,
-          host: DEFAULT_HOST,
-          servedir: DEFAULT_OUTDIR,
-          onRequest: (args: ServeOnRequestArgs) => {
-            if (args.timeInMS) {
-              console.log(`${args.method}: ${args.path} ${args.timeInMS} ms`);
-            }
+      await build({
+        format: "iife",
+        logLevel: "error",
+        outdir: esbuildOutput,
+        platform: DEFAULT_PLATFORM,
+        bundle: true,
+        watch: {
+          onRebuild: (err, res) => {
+            if (err) return console.error(JSON.stringify(err));
           },
         },
-        {
-          outdir: "www",
-          bundle: true,
-          platform: DEFAULT_PLATFORM,
-          define: {
-            "process.env.NODE_ENV": JSON.stringify("development"),
-          },
-          entryPoints: [path.resolve(process.cwd(), DEFAULT_ENTRY_POINT)],
-        }
-      );
-      console.log(`server run on ${DEFAULT_HOST}:${DEFAULT_BUILD_PORT}`);
-      process.on("SIGINT", () => {
-        devServe.stop();
-        process.exit(0);
-      });
-      process.on("SIGTERM", () => {
-        devServe.stop();
-        process.exit(1);
+        define: {
+          "process.env.NODE_ENV": JSON.stringify("development"),
+        },
+        external: ["esbuild"],
+        entryPoints: [path.resolve(process.cwd(), DEFAULT_ENTRY_POINT)],
       });
     } catch (e) {
       console.log(e);
       process.exit(1);
     }
   });
+
+  const ws = createWebSocketServer(malitaServe);
+  function sendMessage(type: string, data?: any) {
+    ws.send(JSON.stringify({ type, data }));
+  }
 };

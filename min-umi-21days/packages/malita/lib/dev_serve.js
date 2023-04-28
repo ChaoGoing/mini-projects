@@ -24580,12 +24580,12 @@ var require_portfinder = __commonJS({
   }
 });
 
-// src/dev.ts
-var dev_exports = {};
-__export(dev_exports, {
+// src/dev_serve.ts
+var dev_serve_exports = {};
+__export(dev_serve_exports, {
   dev: () => dev
 });
-module.exports = __toCommonJS(dev_exports);
+module.exports = __toCommonJS(dev_serve_exports);
 var import_express = __toESM(require_express2());
 var import_portfinder = __toESM(require_portfinder());
 var import_esbuild = require("esbuild");
@@ -24594,11 +24594,12 @@ var import_esbuild = require("esbuild");
 var DEFAULT_OUTDIR = "www";
 var DEFAULT_ENTRY_POINT = "src/index.tsx";
 var DEFAULT_PLATFORM = "browser";
+var DEFAULT_HOST = "127.0.0.1";
 var DEFAULT_PORT = 8888;
+var DEFAULT_BUILD_PORT = 8989;
 
-// src/dev.ts
+// src/dev_serve.ts
 var import_path = __toESM(require("path"));
-var import_http = require("http");
 var dev = () => __async(void 0, null, function* () {
   const app = (0, import_express.default)();
   const port = yield import_portfinder.default.getPortPromise({
@@ -24621,27 +24622,37 @@ var dev = () => __async(void 0, null, function* () {
     </body>
     </html>`);
   });
-  const malitaServe = (0, import_http.createServer)(app);
-  const esbuildOutput = import_path.default.resolve(process.cwd(), DEFAULT_OUTDIR);
-  malitaServe.listen(port, () => __async(void 0, null, function* () {
+  app.listen(port, () => __async(void 0, null, function* () {
     try {
-      yield (0, import_esbuild.build)({
-        format: "iife",
-        logLevel: "error",
-        outdir: esbuildOutput,
-        platform: DEFAULT_PLATFORM,
-        bundle: true,
-        watch: {
-          onRebuild: (err, res) => {
-            if (err)
-              return console.error(JSON.stringify(err));
+      const devServe = yield (0, import_esbuild.serve)(
+        {
+          port: DEFAULT_BUILD_PORT,
+          host: DEFAULT_HOST,
+          servedir: DEFAULT_OUTDIR,
+          onRequest: (args) => {
+            if (args.timeInMS) {
+              console.log(`${args.method}: ${args.path} ${args.timeInMS} ms`);
+            }
           }
         },
-        define: {
-          "process.env.NODE_ENV": JSON.stringify("development")
-        },
-        external: ["esbuild"],
-        entryPoints: [import_path.default.resolve(process.cwd(), DEFAULT_ENTRY_POINT)]
+        {
+          outdir: "www",
+          bundle: true,
+          platform: DEFAULT_PLATFORM,
+          define: {
+            "process.env.NODE_ENV": JSON.stringify("development")
+          },
+          entryPoints: [import_path.default.resolve(process.cwd(), DEFAULT_ENTRY_POINT)]
+        }
+      );
+      console.log(`server run on ${DEFAULT_HOST}:${DEFAULT_BUILD_PORT}`);
+      process.on("SIGINT", () => {
+        devServe.stop();
+        process.exit(0);
+      });
+      process.on("SIGTERM", () => {
+        devServe.stop();
+        process.exit(1);
       });
     } catch (e) {
       console.log(e);
