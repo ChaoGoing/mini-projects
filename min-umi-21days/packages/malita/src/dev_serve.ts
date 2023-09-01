@@ -13,6 +13,7 @@ import path from "path";
 
 export const dev = async () => {
   const app = express();
+  const esbuildOutput = path.resolve(process.cwd(), DEFAULT_OUTDIR);
 
   const port = await portfinder.getPortPromise({
     port: DEFAULT_PORT,
@@ -32,6 +33,8 @@ export const dev = async () => {
         <div id="malita">
             <span>loading...</span>
         </div>
+        <script src="/${DEFAULT_OUTDIR}/index.js"></script>
+        <script src="/malita/client.js"></script>
     </body>
     </html>`);
   });
@@ -73,4 +76,7 @@ export const dev = async () => {
       process.exit(1);
     }
   });
+
+  app.use(`/${DEFAULT_OUTDIR}`, express.static(esbuildOutput));
+  app.use(`/malita`, express.static(path.resolve(__dirname, "client")));
 };
