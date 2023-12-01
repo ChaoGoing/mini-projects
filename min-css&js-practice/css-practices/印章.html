@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    .moon-cake {
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .moon-cake > span {
+      font-size: 80px;
+      white-space: nowrap;
+      position: absolute;
+      left: 50%;
+      top: 49%;
+      transform: translate(-50%, -50%);
+    }
+
+    .yellow {
+      background-color: #c2b52a;
+      border: 20px solid #ffe603;
+      box-sizing: border-box;
+      color: #ffe603;
+    }
+
+    .huan {
+      width: 140px;
+      height: 140px;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 9;
+      border: 5px solid #ffe603;
+    }
+
+    .circle {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      font-size: 20px;
+      font-weight: bold;
+      text-transform: uppercase;
+      text-align: center;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .circle span {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+    }
+  </style>
+  <body>
+    <div class="moon-cake yellow">
+      <span>·月·</span>
+      <!--圆环-->
+      <div class="huan"></div>
+      <!--字围效果-->
+      <div class="circle">zong qiu jie kuai le</div>
+    </div>
+
+    <script>
+      const circle = document.querySelector(".circle");
+      const text = circle.innerText;
+      circle.innerText = "";
+      for (let i = 0; i < text.length; i++) {
+        const letter = text[i];
+        const span = document.createElement("span");
+        span.innerText = letter;
+        const angle = (360 / text.length) * i;
+        span.style.transform = "rotate(" + angle + "deg)";
+        circle.appendChild(span);
+      }
+    </script>
+  </body>
+</html>
