@@ -74,6 +74,7 @@ const mapping =
   (sortFn) =>
   (...args) =>
     sortFn(...args.map((x) => map(x)));
+
 const pass =
   (sortFn) =>
   (...args) =>
