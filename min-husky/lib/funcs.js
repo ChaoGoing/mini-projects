@@ -25,7 +25,7 @@ exports.install = function (dir = ".minhusky") {
       p.join(dir, "_/husky.sh")
     );
 
-    // Configure repo
+    // Configure repo 配置git钩子
     const { error } = git(["config", "core.hooksPath", dir]);
     if (error) {
       throw error;

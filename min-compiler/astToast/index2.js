@@ -1,252 +1,255 @@
 /**
  * 将字符串转为词素数组
- * @param {*} input 
- * @returns 
+ * @param {*} input
+ * @returns
  */
 
 function tokenizer(input) {
-  let current = 0
-  let tokens = []
-  
-  while(current < input.length) {
-    let char = input[current]
-    console.log('char', char)
-    if(char === '(') {
+  let current = 0;
+  let tokens = [];
+
+  while (current < input.length) {
+    let char = input[current];
+    console.log("char", char);
+    if (char === "(") {
       tokens.push({
-        type: 'paren',
-        valaue: '('
-      })
-      current++
-      continue
+        type: "paren",
+        valaue: "(",
+      });
+      current++;
+      continue;
     }
 
-    if(char === ')') {
+    if (char === ")") {
       tokens.push({
-        type: 'paren',
-        value: ')'
-      })
-      current++
-      continue
+        type: "paren",
+        value: ")",
+      });
+      current++;
+      continue;
     }
 
-    let WHITESPACE = /\s/
-    if(WHITESPACE.test(char)) {
-      ++current
-      continue
+    let WHITESPACE = /\s/;
+    if (WHITESPACE.test(char)) {
+      ++current;
+      continue;
     }
 
-    let NUMBER = /[0-9]/
-    if(NUMBER.test(char)) {
-      let value = '' 
-      while((NUMBER.test(char))){
-        value+=char
-        char = input[++current]
+    let NUMBER = /[0-9]/;
+    if (NUMBER.test(char)) {
+      let value = "";
+      while (NUMBER.test(char)) {
+        value += char;
+        char = input[++current];
       }
       tokens.push({
-        type: 'number',
-        value
-      })
-      continue
+        type: "number",
+        value,
+      });
+      continue;
     }
 
-    if(char === '"') {
-      let value = ''
-      char = input[++current]
-      while(char !== '"') {
-        value += char
-        char = input[++current]
+    if (char === '"') {
+      let value = "";
+      char = input[++current];
+      while (char !== '"') {
+        value += char;
+        char = input[++current];
       }
       tokens.push({
-        type: 'string',
-        value
-      })
-      char = input[++current]
-      continue 
+        type: "string",
+        value,
+      });
+      char = input[++current];
+      continue;
     }
 
-    const LETTERS = /[a-z]/i
-    if(LETTERS.test(char)) {
-      let value = ''
-      while(LETTERS.test(char)) {
-        value+=char
-        char = input[++current]
+    const LETTERS = /[a-z]/i;
+    if (LETTERS.test(char)) {
+      let value = "";
+      while (LETTERS.test(char)) {
+        value += char;
+        char = input[++current];
       }
       tokens.push({
-        type: 'name',
-        value
-      })
-      continue
+        type: "name",
+        value,
+      });
+      continue;
     }
-    
-    throw new Error('unknown syntax')
+
+    throw new Error("unknown syntax");
   }
 
-  return tokens
+  return tokens;
 }
 
 // console.log(tokenizer('(add 4 2)'));
 // console.log(tokenizer('(substruct 2 2)'));
 
+// current通过 闭包 保存，在递归时可以共用
 function parser(tokens) {
   let current = 0;
   function walk() {
-    let token = tokens[current]
-    if(token.type === 'number') {
-      current++
+    let token = tokens[current];
+    if (token.type === "number") {
+      current++;
       return {
-        type: 'NumberLiteral',
-        value: token.value
-      }
+        type: "NumberLiteral",
+        value: token.value,
+      };
     }
-    if(token.type === 'string') {
-      current++
+    if (token.type === "string") {
+      current++;
       return {
-        type: 'StringLiteral',
-        value: token.value
-      }
+        type: "StringLiteral",
+        value: token.value,
+      };
     }
-    if(token.type === 'paren' && token.valaue === '(') {
-      token = tokens[++current]
+    if (token.type === "paren" && token.valaue === "(") {
+      token = tokens[++current];
       let node = {
-        type: 'CallExpression',
+        type: "CallExpression",
         name: token.value,
-        params: []
-      }
+        params: [],
+      };
       // skip name token
-      token = tokens[++current]
-      while(token.type !== 'paren' || (token.type === 'paren' && token.value !== ')')){
-        node.params.push(walk())
-        token = tokens[current]
+      token = tokens[++current];
+      while (
+        token.type !== "paren" ||
+        (token.type === "paren" && token.value !== ")")
+      ) {
+        node.params.push(walk());
+        token = tokens[current];
       }
-      current++
-      return node
+      current++;
+      return node;
     }
-    console.log('unknown token type', token)
+    console.log("unknown token type", token);
   }
   const ast = {
-    type: 'Program',
-    body: []
+    type: "Program",
+    body: [],
+  };
+  while (current < tokens.length) {
+    ast.body.push(walk());
   }
-  while(current < tokens.length) {
-    ast.body.push(walk())
-  }
-  return ast
+  return ast;
 }
 
 function traverser(ast, visitor) {
   function traverArray(array, parent) {
-    array.forEach(child => {
-      traverNode(child, parent)
+    array.forEach((child) => {
+      traverNode(child, parent);
     });
   }
 
   function traverNode(node, parent) {
-    let methods = visitor[node.type]
-    if(methods && methods.enter) {
-      methods.enter(node, parent)
+    let methods = visitor[node.type];
+    if (methods && methods.enter) {
+      methods.enter(node, parent);
     }
     switch (node.type) {
-      case 'Program': 
-        traverArray(node.body, node)
-        break
-      case 'CallExpression':
-        traverArray(node.params, node)
-        break
-      case 'NumberLiteral':
-      case 'StringLiteral':
-        break
+      case "Program":
+        traverArray(node.body, node);
+        break;
+      case "CallExpression":
+        traverArray(node.params, node);
+        break;
+      case "NumberLiteral":
+      case "StringLiteral":
+        break;
       default:
-        console.log('unknown type in traverser')
+        console.log("unknown type in traverser");
     }
   }
 
-  traverNode(ast, null)
-
+  traverNode(ast, null);
 }
 
 function transformer(ast) {
   let newAst = {
-    type: 'Program',
-    body: []
-  }
+    type: "Program",
+    body: [],
+  };
 
-  ast._context = newAst.body
+  ast._context = newAst.body;
 
   traverser(ast, {
     NumberLiteral: {
       enter(node, parent) {
         parent._context.push({
-          type: 'NumberLiteral',
-          value: node.value
-        })
-      }
+          type: "NumberLiteral",
+          value: node.value,
+        });
+      },
     },
     StringLiteral: {
       enter(node, parent) {
         parent._context.push({
-          type: 'StringLiteral',
-          value: node.value
-        })
-      }
+          type: "StringLiteral",
+          value: node.value,
+        });
+      },
     },
     CallExpression: {
       enter(node, parent) {
         let expression = {
-          type: 'CallExpression',
+          type: "CallExpression",
           callee: {
-            type: 'Identifier',
-            name: node.name
+            type: "Identifier",
+            name: node.name,
           },
-          arguments: []
-        }
-        node._context = expression.arguments
-        if(parent.type !== 'CallExpresion'){
+          arguments: [],
+        };
+        node._context = expression.arguments;
+        if (parent.type !== "CallExpresion") {
           expression = {
-            type: 'ExpressionStatement',
+            type: "ExpressionStatement",
             expression: expression,
-          }
+          };
         }
-        parent._context.push(expression)
-      }
-    }
-  })
-  return newAst
+        parent._context.push(expression);
+      },
+    },
+  });
+  return newAst;
 }
 
-
 function codeGenerator(node) {
-  switch(node.type) {
-    case 'Program':
-      return node.body.map(codeGenerator).join('\n')
-      
-    case 'ExpressionStatement':
-      return (
-        codeGenerator(node.expression) + ';'
-      )
+  switch (node.type) {
+    case "Program":
+      return node.body.map(codeGenerator).join("\n");
 
-    case 'CallExpression':
-      return (
-        codeGenerator(node.callee) + '(' + node.arguments.map(codeGenerator).join(',') + ')'
-      )
+    case "ExpressionStatement":
+      return codeGenerator(node.expression) + ";";
 
-    case 'Identifier': 
-      return node.name
-    case 'NumberLiteral': 
-      return node.value
-    case 'StringLiteral':
-      return '"' + node.value + '"'
+    case "CallExpression":
+      return (
+        codeGenerator(node.callee) +
+        "[" +
+        node.arguments.map(codeGenerator).join(",") +
+        "]"
+      );
+
+    case "Identifier":
+      return node.name;
+    case "NumberLiteral":
+      return node.value;
+    case "StringLiteral":
+      return '"' + node.value + '"';
     default:
-      console.log('unknown error in generate', node)
+      console.log("unknown error in generate", node);
   }
 }
 
-const tokens = tokenizer('(substruct 4 (add 4 2))')
-console.log(tokens)
+const tokens = tokenizer("(substruct 4 (add 4 2))");
+// console.log(tokens);
 
-const ast = parser(tokens)
-console.log(ast)
+const ast = parser(tokens);
+console.log(JSON.stringify(ast));
 
-const newAst = transformer(ast)
-console.log(JSON.stringify(newAst))
+const newAst = transformer(ast);
+console.log(JSON.stringify(newAst));
 
-console.log(codeGenerator(newAst));
+// console.log(codeGenerator(newAst));
