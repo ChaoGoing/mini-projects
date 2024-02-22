@@ -125,7 +125,7 @@ function parser(tokens) {
       current++;
       return node;
     }
-    console.log("unknown token type", token);
+    // console.log("unknown token type", token);
   }
   const ast = {
     type: "Program",
@@ -244,7 +244,7 @@ function codeGenerator(node) {
 }
 
 const tokens = tokenizer("(substruct 4 (add 4 2))");
-// console.log(tokens);
+console.log(tokens);
 
 const ast = parser(tokens);
 console.log(JSON.stringify(ast));

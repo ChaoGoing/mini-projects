@@ -22,6 +22,7 @@
                   scope: "./",
                 }
               );
+
               if (registration.installing) {
                 console.log("正在安装 Service worker");
               } else if (registration.waiting) {
@@ -29,6 +30,14 @@
               } else if (registration.active) {
                 console.log("激活 Service worker");
               }
+
+              const registration2 = await navigator.serviceWorker.register(
+                "./sw.js",
+                {
+                  scope: "./public",
+                }
+              );
+              console.log("registration2: ", registration2);
             } catch (error) {
               console.error(`注册失败：${error}`);
             }
