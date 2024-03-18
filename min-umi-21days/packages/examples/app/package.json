@@ -3,7 +3,7 @@
   "scripts": {
     "build": "pnpm esbuild src/** --bundle --outdir=www",
     "dev": "pnpm build -- --watch",
-    "serve": "cd www && serve"
+    "serve": "cd www && serve --loader:jsx=react"
   },
   "dependencies": {
     "react": "^18.2.0",

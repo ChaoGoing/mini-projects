@@ -7,6 +7,7 @@ export function createWebSocketServer(server: HttpServer) {
   });
 
   server.on("upgrade", (req, socket, head) => {
+    console.log("upgrade: ");
     if (req.headers["sec-websocket-protocol"] === "malita-hmr") {
       wss.handleUpgrade(req, socket as any, head, (ws) => {
         wss.emit("connection", ws, req);

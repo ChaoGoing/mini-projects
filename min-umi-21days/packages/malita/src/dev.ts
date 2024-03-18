@@ -19,7 +19,9 @@ export const dev = async () => {
   const port = await portfinder.getPortPromise({
     port: DEFAULT_PORT,
   });
-
+  const esbuildOutput = path.resolve(process.cwd(), DEFAULT_OUTDIR);
+  app.use(`/${DEFAULT_OUTDIR}`, express.static(esbuildOutput));
+  app.use(`/malita`, express.static(path.resolve(__dirname, "client")));
   app.get("/", (_req, res) => {
     res.set("Content-Type", "text/html");
     res.send(`<!DOCTYPE html>
@@ -35,12 +37,19 @@ export const dev = async () => {
             <span>loading...</span>
         </div>
     </body>
+    <script src="/${DEFAULT_OUTDIR}/index.js"></script>
+            <script src="/malita/client.js"></script>
     </html>`);
   });
 
   const malitaServe = createServer(app);
-  const esbuildOutput = path.resolve(process.cwd(), DEFAULT_OUTDIR);
+
+  const ws = createWebSocketServer(malitaServe);
+  function sendMessage(type: string, data?: any) {
+    ws.send(JSON.stringify({ type, data }));
+  }
   malitaServe.listen(port, async () => {
+    console.log(`App listening at http://${DEFAULT_HOST}:${port}`);
     try {
       await build({
         format: "iife",
@@ -51,6 +60,7 @@ export const dev = async () => {
         watch: {
           onRebuild: (err, res) => {
             if (err) return console.error(JSON.stringify(err));
+            sendMessage("reload");
           },
         },
         define: {
@@ -64,9 +74,4 @@ export const dev = async () => {
       process.exit(1);
     }
   });
-
-  const ws = createWebSocketServer(malitaServe);
-  function sendMessage(type: string, data?: any) {
-    ws.send(JSON.stringify({ type, data }));
-  }
 };
