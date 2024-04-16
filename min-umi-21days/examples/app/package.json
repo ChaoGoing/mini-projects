@@ -3,15 +3,13 @@
   "scripts": {
     "build": "pnpm esbuild src/** --bundle --outdir=www",
     "dev": "pnpm build -- --watch",
-    "serve": "cd www && serve --loader:jsx=react"
+    "serve": "cd www && serve"
   },
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@types/react": "^18.0.38",
-    "@types/react-dom": "^18.0.11",
     "esbuild": "^0.17.17",
     "serve": "^14.2.0",
     "malita": "workplace:*"

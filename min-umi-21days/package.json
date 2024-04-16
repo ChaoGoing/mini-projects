@@ -4,10 +4,6 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "@babel/core": "^7.24.0",
-    "@types/ws": "^8.5.4",
-    "esbuild-plugin-babel": "^0.2.3",
-    "typescript": "^5.0.4",
     "ws": "^8.13.0"
   },
   "devDependencies": {
