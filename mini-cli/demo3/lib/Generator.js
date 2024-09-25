@@ -40,5 +40,7 @@ module.exports = class Generator {
   async create() {
     const target_repo = await this.getRepo();
     console.log("selected ", target_repo);
+    const target_tag = await getTagList(target_repo);
+    const files = this.downloadGitRepo(target_repo, target_tag);
   }
 };

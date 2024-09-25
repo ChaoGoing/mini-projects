@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        background: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .wrap {
+        height: 120px;
+        line-height: 120px;
+      }
+      .filper-item {
+        position: relative;
+        color: blueviolet;
+        font-size: 100px;
+        font-weight: bold;
+        perspective: 700px;
+      }
+      .card-item {
+        top: 0;
+        left: 0;
+        position: absolute;
+        background: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="wrap" class="wrap"></div>
+
+    <script>
+      class FilperItem {
+        constructor(wrap) {
+          this.num = 0;
+          this.initDom();
+          wrap.appendChild(this.el);
+        }
+
+        createCard(type, num, fixed) {
+          const el = document.createElement("div");
+          el.className = "card-item";
+          const innerText = num;
+          if (fixed) {
+            el.style.position = "relative";
+          }
+          // 上下的 clipPath
+          const clipPath =
+            type === "top"
+              ? "polygon(0 0, 100% 0%, 100% 50%, 0 50%)"
+              : "polygon(0 50%, 100% 50%, 100% 100%, 0% 100%)";
+          el.innerText = innerText;
+          el.style.clipPath = clipPath;
+          return el;
+        }
+
+        initDom() {
+          const el = document.createElement("div");
+          el.className = "filper-item";
+          const top = this.createCard("top", 0, false);
+          const bottom = this.createCard("bottom", 0, true);
+          // 添加默认的上下
+          el.appendChild(top);
+          el.appendChild(bottom);
+          this.el = el;
+          this.top = top;
+          this.bottom = bottom;
+        }
+
+        increase(to = undefined) {
+          const { num, top, bottom, el } = this;
+          let txt = to ?? (num + 1) % 10;
+          if (txt === num) return;
+          // 动画
+          const animate = {
+            zIndex: [1, 1],
+            transform: ["rotateX(0)", "rotateX(-90deg)"],
+            offset: [0, 1],
+          };
+          const animate1 = {
+            zIndex: [1, 1],
+            transform: ["rotateX(90deg)", "rotateX(0deg)"],
+            offset: [0, 1],
+          };
+          const animateOption = {
+            duration: 500,
+          };
+          const t = this.createCard("top", num);
+          el.insertBefore(t, el.childNodes[1]);
+          const ta = t.animate(animate, animateOption);
+          setTimeout(() => {
+            top.innerText = txt;
+          });
+          // 上部分动画完成后插入下部分并执行动画
+          ta.onfinish = () => {
+            el.removeChild(t);
+            const b = this.createCard("bottom", txt);
+            el.appendChild(b);
+            const ba = b.animate(animate1, animateOption);
+            ba.onfinish = () => {
+              bottom.innerText = txt;
+              el.removeChild(b);
+            };
+          };
+          this.num = txt;
+        }
+
+        reduce(to = undefined) {
+          const { num, top, bottom, el } = this;
+          let txt = to ?? (num + 9) % 10;
+          if (txt === num) return;
+          const animate = {
+            zIndex: [1, 1],
+            transform: ["rotateX(-90deg)", "rotateX(0)"],
+            offset: [0, 1],
+          };
+          const animate1 = {
+            zIndex: [1, 1],
+            transform: ["rotateX(0deg)", "rotateX(90deg)"],
+            offset: [0, 1],
+          };
+          const animateOption = {
+            duration: 500,
+          };
+          const b = this.createCard("bottom", num);
+          if (bottom.nextElementSibling) {
+            el.insertBefore(b, bottom.nextElementSibling);
+          } else {
+            el.appendChild(b);
+          }
+
+          const ba = b.animate(animate1, animateOption);
+          setTimeout(() => {
+            bottom.innerText = txt;
+          });
+          ba.onfinish = () => {
+            el.removeChild(b);
+            const t = this.createCard("top", txt);
+            el.insertBefore(t, bottom);
+            const ta = t.animate(animate, animateOption);
+            ta.onfinish = () => {
+              top.innerText = txt;
+              el.removeChild(t);
+            };
+          };
+          this.num = txt;
+        }
+
+        filper(next, dir = "increase") {
+          switch (dir) {
+            case "increase": {
+              this.increase(next);
+              break;
+            }
+            case "reduce": {
+              this.reduce(next);
+            }
+          }
+        }
+      }
+
+      const f = new FilperItem(document.getElementById("wrap"));
+      window.f = f;
+
+      window.onkeydown = (e) => {
+        if (e.code === "ArrowDown") {
+          f.reduce();
+        } else if (e.code === "ArrowUp") {
+          f.increase();
+        } else if (/^\d$/.test(e.key)) {
+          f.filper(Number(e.key));
+        }
+      };
+    </script>
+  </body>
+</html>
