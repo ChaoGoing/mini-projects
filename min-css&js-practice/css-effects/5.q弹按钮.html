@@ -1,0 +1,64 @@
+<!-- 
+    1.非常规思路：背景层不一定就需要在最底部，也可以置于最顶层，通过mix-blend-mode: difference;穿透文字
+    2.
+
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .radio-group {
+        width: 600px;
+        text-align: center;
+        margin: 200px auto 0;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        position: relative;
+      }
+      .radio-group input {
+        display: none;
+      }
+      .radio-group label {
+        padding: 12px 24px;
+        display: flex;
+        justify-content: center;
+        transition: all 0.3s;
+      }
+      .selection-indicator-wrapper {
+        --transition-duration: 0.3s;
+        --morph-factor: 0;
+        position: absolute;
+        left: 0;
+        width: 33.3%;
+        mix-blend-mode: difference;
+      }
+      .selection-indicator-wrapper > span {
+        background-color: red;
+      }
+      /* .radio-group input[type="radio"]:nth-of-type(2):checked ~ .selection-indicator-wrapper {
+            left: 33.3%;
+        }
+        .radio-group input[type="radio"]:nth-of-type(3):checked ~ .selection-indicator-wrapper {
+            left: 66.6%;
+        } */
+    </style>
+  </head>
+  <body>
+    <div class="radio-group">
+      <input checked type="radio" name="color"" id="tab1" />
+      <label for="tab1">tab1</label>
+      <input type="radio name="color" id="tab2" />
+      <label for="tab2">tab2</label>
+      <input type="radio name="color" id="tab3" />
+      <label for="tab3">tab3</label>
+
+      <div class="selection-indicator-wrapper">
+        <span class="selection-indicator"></span>
+      </div>
+    </div>
+  </body>
+  <script></script>
+</html>
