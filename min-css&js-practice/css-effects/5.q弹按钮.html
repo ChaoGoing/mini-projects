@@ -26,33 +26,98 @@
         display: flex;
         justify-content: center;
         transition: all 0.3s;
+        color: red;
       }
       .selection-indicator-wrapper {
         --transition-duration: 0.3s;
         --morph-factor: 0;
+        --bounciness: 15;
         position: absolute;
         left: 0;
         width: 33.3%;
+        height: 100%;
         mix-blend-mode: difference;
+        pointer-events: none;
+        transition-duration: calc(1.25 * var(--transition-duration));
+        transition-timing-function: cubic-bezier(
+          0.25,
+          calc(var(--bounciness) / 10),
+          0.5,
+          1
+        );
       }
       .selection-indicator-wrapper > span {
         background-color: red;
+        display: block;
+        width: 100%;
+        height: 100%;
+        border-radius: 100px;
+        transition-duration: calc(1.25 * var(--transition-duration));
+        transition-timing-function: cubic-bezier(
+          0.95,
+          calc(0.5 * var(--bounciness)),
+          0,
+          1
+        );
       }
-      /* .radio-group input[type="radio"]:nth-of-type(2):checked ~ .selection-indicator-wrapper {
-            left: 33.3%;
-        }
-        .radio-group input[type="radio"]:nth-of-type(3):checked ~ .selection-indicator-wrapper {
-            left: 66.6%;
-        } */
+      .radio-group
+        input[type="radio"]:nth-of-type(2):checked
+        ~ .selection-indicator-wrapper {
+        left: 33.3%;
+      }
+      .radio-group
+        input[type="radio"]:nth-of-type(3):checked
+        ~ .selection-indicator-wrapper {
+        left: 66.6%;
+      }
+
+      .radio-group
+        input:checked
+        ~ input
+        + label:hover
+        ~ .selection-indicator-wrapper {
+        --morph-factor: 1;
+      }
+      .radio-group
+        input:checked
+        ~ input
+        ~ input
+        + label:hover
+        ~ .selection-indicator-wrapper {
+        --morph-factor: 2;
+      }
+
+      .radio-group label:hover ~ input:checked ~ .selection-indicator-wrapper {
+        --morph-factor: -1;
+      }
+
+      .radio-group
+        label:hover
+        ~ input
+        ~ input:checked
+        ~ .selection-indicator-wrapper {
+        --morph-factor: -1.5;
+      }
+
+      .radio-group label:active ~ .selection-indicator-wrapper {
+        --transition-duration: 0.1s;
+      }
+      .radio-group label:active ~ .selection-indicator-wrapper > span {
+        transform: scale(
+          calc(1 + var(--morph-factor) * var(--morph-factor) * 0.05),
+          calc(1 - var(--morph-factor) * var(--morph-factor) * 0.1)
+        );
+        transition-timing-function: unset;
+      }
     </style>
   </head>
   <body>
     <div class="radio-group">
       <input checked type="radio" name="color"" id="tab1" />
       <label for="tab1">tab1</label>
-      <input type="radio name="color" id="tab2" />
+      <input type="radio" name="color" id="tab2" />
       <label for="tab2">tab2</label>
-      <input type="radio name="color" id="tab3" />
+      <input type="radio" name="color" id="tab3" />
       <label for="tab3">tab3</label>
 
       <div class="selection-indicator-wrapper">

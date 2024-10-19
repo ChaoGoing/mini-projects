@@ -1,0 +1,21 @@
+.comments {
+  position: relative;
+  padding: 0 24px;
+}
+.comments .total {
+  font-size: 28px;
+  font-weight: 500;
+  color: #212121;
+  line-height: 40px;
+}
+.comments .showMore {
+  margin: 44px 10px 0 64px;
+  font-size: 26px;
+  color: #546c95;
+  height: 37px;
+}
+.comments .showMore svg,
+.comments .showMore span {
+  font-size: 26px;
+  vertical-align: middle;
+}/*# sourceMappingURL=index.module.css.map */

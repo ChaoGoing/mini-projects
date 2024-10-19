@@ -1,0 +1,31 @@
+.container {
+  position: relative;
+}
+
+.backdrop {
+  position: absolute !important;
+  inset: 0;
+  bottom: unset;
+  pointer-events: none;
+  transition: transform 1s;
+}
+.backdrop::-webkit-scrollbar {
+  visibility: hidden;
+}
+
+.highlights {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  color: transparent !important;
+  width: 100%;
+}
+.highlights mark {
+  border-radius: 3px;
+  color: transparent;
+  background-color: #ffa72b;
+  padding: 0;
+  margin: 0;
+}
+.highlights mark:nth-last-of-type(1) {
+  margin-left: -0.1px;
+}/*# sourceMappingURL=index.module.css.map */

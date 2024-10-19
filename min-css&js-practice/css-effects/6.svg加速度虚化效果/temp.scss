@@ -1,0 +1,101 @@
+$bg-color: #111;
+$txt-color: #fff;
+$color-c1: red;
+$color-c2: blue;
+$offset-c1: 3px;
+$offset-c2: 2px;
+$lay-c1: 2px;
+$lay-c2: 2px;
+
+*,
+*:before,
+*:after {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-weight: 700;
+  background: $bg-color;
+  color: $txt-color;
+}
+
+.screen {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.clock {
+  display: block;
+  position: absolute;
+  z-index: 9;
+  width: 720px;
+  height: 128px;
+  text-align: center;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  cursor: default;
+
+  span {
+    display: block;
+    position: relative;
+    font-size: 128px;
+    line-height: 1;
+
+    &:before,
+    &:after {
+      display: block;
+      content: attr(data-time);
+      position: absolute;
+      top: 0;
+      color: $txt-color;
+      background: $bg-color;
+      overflow: hidden;
+      width: 720px;
+      height: 128px;
+      clip: rect(0, 900px, 0, 0);
+    }
+
+    &:before {
+      left: calc(-#{$offset-c2});
+      text-shadow: #{$lay-c2} 0 #{$color-c2};
+      animation: c2 1s infinite linear alternate-reverse;
+    }
+
+    // &:after {
+    //   left: #{$offset-c1};
+    //   text-shadow: calc(-#{$lay-c1}) 0 #{$color-c1};
+    //   animation: c1 2s infinite linear alternate-reverse;
+    // }
+  }
+
+  &.is-off {
+    animation: is-off 2s linear infinite !important;
+  }
+}
+
+@keyframes c2 {
+  @for $i from 0 through 20 {
+    #{percentage($i / 20)} {
+      clip: rect(random(100) * 1px, 9999px, random(100) * 1px, 0);
+    }
+  }
+  23% {
+    transform: scaleX(0.8);
+  }
+}
