@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+      }
+      .view {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+      .view.special {
+        position: absolute;
+        background-image: linear-gradient(60deg, #f8ddd1, #faece5 73%, #fad2c0);
+      }
+      .sun {
+        position: absolute;
+        top: 45%;
+        width: 283px;
+        height: 283px;
+        background: url(https://s5.music.126.net/static_public/5c21db8d4684556c72180904/sun.a3f575ae2fef2cfdae15011e6081a094.png)
+          no-repeat;
+        background-size: 100%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      /* 秋千 外层压缩 */
+      .art {
+        transform: scale(0.5);
+        position: absolute;
+        top: -140px;
+        right: 0;
+        width: 750px;
+        height: 1334px;
+        transform-origin: top right;
+      }
+      /* 秋千动画 */
+      .swing {
+        display: block;
+        position: absolute;
+        left: 226px;
+        top: -180.25px;
+        width: 478px;
+        height: 1038px;
+        background: url(https://s5.music.126.net/static_public/5c21db8d4684556c72180904/swing.88545d6c8e1ac798465e367f8e5357ab.png)
+          no-repeat;
+        transform-origin: -16.10878661% -29.76878613%;
+        animation: ani4_qiuqian 6s cubic-bezier(0.455, 0.03, 0.515, 0.955)
+          infinite;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="view special">
+      <div class="sun"></div>
+      <div class="art">
+        <div class="swing j-anim03 z-anim">
+          <div class="leg2">
+            <div class="jiojio"></div>
+          </div>
+          <!-- 腿 -->
+          <div class="leg1">
+            <div class="jiojio"></div>
+          </div>
+          <!-- 脖子 -->
+          <div class="neck"></div>
+          <!-- 头 -->
+          <div class="head">
+            <div class="part"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
