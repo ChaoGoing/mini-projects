@@ -31,6 +31,8 @@ function sandBoxingEval(scopeProxy, userCode) {
 }
 const code = `
     log.constructor.prototype.__proto__.aa = 'aa'
+    console.log(log.constructor.prototype.__proto__)
+    console.log({}.aa)
     console.log((log(1)))
   `;
 
