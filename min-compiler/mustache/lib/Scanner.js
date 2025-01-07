@@ -60,7 +60,7 @@ function parseTemplateToTokens(templateStr) {
 
         }
       }
-      tokens.push(['text', _words]);
+      !!_words && tokens.push(['text', _words]);
       // 过双大括号
       scanner.scan('{{');
       // 收集开始标记出现之前的文字
@@ -96,6 +96,7 @@ function nestTokens(tokens) {
   let collector = nestTokens;
   for (let i = 0; i < tokens.length; i++) {
     let token = tokens[i];
+    console.log('collector: ', token, collector);
     // console.log('token: ', token);
     switch (token[0]) {
       case '#':
@@ -126,7 +127,7 @@ function nestTokens(tokens) {
 const _tokens = parseTemplateToTokens(`<div>{{#students}}
     {{name}}
     {{#class}}
-        {{className}}
+        <div>{{className}}</div>
     {{/class}}
 {{/students}}</div>`)
 console.log('tokens: ', JSON.stringify(_tokens))

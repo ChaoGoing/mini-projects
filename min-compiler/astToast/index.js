@@ -147,7 +147,7 @@ function traverser(ast, visitor) {
   function traverseNode(node, parent) {
     let methods = visitor[node.type];
     if (methods && methods.enter) {
-      methods.enterr(node, parent);
+      methods.enter(node, parent);
     }
     switch (node.type) {
       case "Program":
@@ -176,4 +176,4 @@ function transformer(ast) {
   traverser(ast, {});
 }
 
-function codeGenerator(params) {}
+function codeGenerator(params) { }

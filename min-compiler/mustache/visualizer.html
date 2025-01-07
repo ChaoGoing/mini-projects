@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mustache Parser Visualizer</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+      .input-section,
+      .output-section {
+        border: 1px solid #ccc;
+        padding: 20px;
+        border-radius: 5px;
+      }
+      .visualization {
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #f5f5f5;
+      }
+      .token {
+        margin: 5px;
+        padding: 5px;
+        border: 1px solid #ddd;
+        display: inline-block;
+        border-radius: 3px;
+      }
+      .token.text {
+        background-color: #e3f2fd;
+      }
+      .token.name {
+        background-color: #f0f4c3;
+      }
+      .token.section {
+        background-color: #ffccbc;
+      }
+      .nested {
+        margin-left: 20px;
+        border-left: 2px solid #666;
+        padding-left: 10px;
+      }
+      #template {
+        width: 100%;
+        height: 100px;
+        margin-bottom: 10px;
+      }
+      .scanner-pos {
+        position: relative;
+        font-family: monospace;
+        white-space: pre;
+        margin: 10px 0;
+      }
+      .scanner-pointer {
+        position: absolute;
+        bottom: -20px;
+        color: red;
+        font-weight: bold;
+      }
+      .controls {
+        margin: 20px 0;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .step-info {
+        margin-left: 20px;
+        color: #666;
+      }
+      .breakpoint {
+        cursor: pointer;
+        user-select: none;
+        color: #999;
+      }
+      .breakpoint.active {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Mustache Parser Visualizer</h1>
+
+    <div class="container">
+      <div class="input-section">
+        <h2>Template Input</h2>
+        <textarea id="template">
+<div>{{#students}}
+    {{name}}
+    {{#class}}
+        <div>{{className}}</div>
+    {{/class}}
+{{/students}}</div></textarea
+        >
+        <button onclick="visualize()">Parse Template</button>
+        <div class="controls">
+          <button id="stepBtn" disabled>Step</button>
+          <button id="continueBtn" disabled>Continue</button>
+          <button id="resetBtn" disabled>Reset</button>
+          <span class="step-info" id="stepInfo"></span>
+        </div>
+      </div>
+
+      <div class="output-section">
+        <h2>Parsing Process</h2>
+        <div id="visualization" class="visualization"></div>
+      </div>
+    </div>
+
+    <script>
+      let currentStep = 0;
+      let scannerStates = [];
+      let breakpoints = new Set();
+      let isRunning = false;
+
+      // 获取控制按钮
+      const stepBtn = document.getElementById("stepBtn");
+      const continueBtn = document.getElementById("continueBtn");
+      const resetBtn = document.getElementById("resetBtn");
+      const stepInfo = document.getElementById("stepInfo");
+
+      // 更新按钮状态
+      function updateControls(running) {
+        isRunning = running;
+        stepBtn.disabled = !running;
+        continueBtn.disabled = !running;
+        resetBtn.disabled = !running;
+      }
+
+      class Scanner {
+        constructor(templateStr) {
+          this.templateStr = templateStr;
+          this.pos = 0;
+          this.tail = this.templateStr;
+        }
+
+        scan(tag) {
+          if (this.tail.indexOf(tag) === 0) {
+            this.pos += tag.length;
+            this.tail = this.templateStr.substring(this.pos);
+            return true;
+          }
+          return false;
+        }
+
+        scanUntil(stopTag) {
+          const pos_backup = this.pos;
+          while (!this.eos() && this.tail.indexOf(stopTag) != 0) {
+            this.pos++;
+            this.tail = this.templateStr.substring(this.pos);
+          }
+          return this.templateStr.substring(pos_backup, this.pos);
+        }
+
+        eos() {
+          return this.pos >= this.templateStr.length;
+        }
+      }
+
+      function visualize() {
+        const templateStr = document.getElementById("template").value;
+        const visualizationDiv = document.getElementById("visualization");
+        visualizationDiv.innerHTML = "";
+        currentStep = 0;
+        scannerStates = [];
+
+        // Create scanning visualization
+        const scanner = new Scanner(templateStr);
+        const tokens = [];
+
+        function addScannerState(message) {
+          scannerStates.push({
+            pos: scanner.pos,
+            message,
+            tokens: [...tokens],
+            template: templateStr,
+          });
+        }
+
+        while (!scanner.eos()) {
+          const words = scanner.scanUntil("{{");
+          if (words !== "") {
+            let isJJH = false;
+            let _words = "";
+            for (let i = 0; i < words.length; i++) {
+              if (words[i] == "<") isJJH = true;
+              else if (words[i] == ">") isJJH = false;
+
+              if (!/\s/.test(words[i])) {
+                _words += words[i];
+              } else if (isJJH) {
+                _words += " ";
+              }
+            }
+
+            if (!!_words) {
+              tokens.push(["text", _words]);
+              addScannerState(`Found text: "${_words}"`);
+            }
+          }
+
+          if (scanner.scan("{{")) {
+            const words = scanner.scanUntil("}}");
+            if (words !== "") {
+              if (words[0] === "#") {
+                tokens.push(["#", words.substring(1)]);
+                addScannerState(`Found section start: "${words.substring(1)}"`);
+              } else if (words[0] === "/") {
+                tokens.push(["/", words.substring(1)]);
+                addScannerState(`Found section end: "${words.substring(1)}"`);
+              } else {
+                tokens.push(["name", words]);
+                addScannerState(`Found variable: "${words}"`);
+              }
+            }
+            scanner.scan("}}");
+          }
+        }
+
+        // Display final nested structure
+        const nestedTokens = nestTokens(tokens);
+        const structureDiv = document.createElement("div");
+        structureDiv.innerHTML = "<h3>Final Nested Structure:</h3>";
+        structureDiv.appendChild(renderNestedTokens(nestedTokens));
+        visualizationDiv.appendChild(structureDiv);
+
+        // 初始化可视化控制
+        updateControls(true);
+        renderStep(0);
+        console.log(scannerStates);
+      }
+
+      function renderNestedTokens(tokens, level = 0) {
+        const container = document.createElement("div");
+        container.className = level > 0 ? "nested" : "";
+
+        tokens.forEach((token) => {
+          const tokenDiv = document.createElement("div");
+          tokenDiv.className = "token";
+
+          if (token[0] === "#") {
+            tokenDiv.className += " section";
+            tokenDiv.textContent = `Section Start: ${token[1]}`;
+            container.appendChild(tokenDiv);
+            if (token[2]) {
+              container.appendChild(renderNestedTokens(token[2], level + 1));
+            }
+          } else if (token[0] === "/") {
+            tokenDiv.className += " section";
+            tokenDiv.textContent = `Section End: ${token[1]}`;
+            container.appendChild(tokenDiv);
+          } else if (token[0] === "name") {
+            tokenDiv.className += " name";
+            tokenDiv.textContent = `Variable: ${token[1]}`;
+            container.appendChild(tokenDiv);
+          } else {
+            tokenDiv.className += " text";
+            tokenDiv.textContent = `Text: ${token[1]}`;
+            container.appendChild(tokenDiv);
+          }
+        });
+
+        return container;
+      }
+
+      function nestTokens(tokens) {
+        let nestTokens = [];
+        let sections = [];
+        let collector = nestTokens;
+
+        tokens.forEach((token) => {
+          switch (token[0]) {
+            case "#":
+              collector.push(token);
+              sections.push(token);
+              collector = token[2] = [];
+              break;
+            case "/":
+              sections.pop();
+              collector =
+                sections.length > 0
+                  ? sections[sections.length - 1][2]
+                  : nestTokens;
+              break;
+            default:
+              collector.push(token);
+          }
+        });
+
+        return nestTokens;
+      }
+
+      // 渲染特定步骤
+      function renderStep(step) {
+        if (step >= scannerStates.length) return;
+
+        const visualizationDiv = document.getElementById("visualization");
+        visualizationDiv.innerHTML = "";
+
+        const state = scannerStates[step];
+
+        // 渲染扫描器状态
+        const stateDiv = document.createElement("div");
+        stateDiv.className = "scanner-pos";
+
+        // 添加断点标记
+        const breakpointDiv = document.createElement("span");
+        breakpointDiv.className = `breakpoint ${
+          breakpoints.has(step) ? "active" : ""
+        }`;
+        breakpointDiv.textContent = "●";
+        breakpointDiv.onclick = () => toggleBreakpoint(step);
+
+        const text = document.createElement("div");
+        text.textContent = state.template;
+
+        const pointer = document.createElement("div");
+        pointer.className = "scanner-pointer";
+        pointer.textContent = "↑";
+        pointer.style.left = `${state.pos * 8}px`;
+
+        stateDiv.appendChild(breakpointDiv);
+        stateDiv.appendChild(text);
+        stateDiv.appendChild(pointer);
+
+        const messageDiv = document.createElement("div");
+        messageDiv.textContent = state.message;
+        messageDiv.style.color = "#666";
+
+        visualizationDiv.appendChild(stateDiv);
+        visualizationDiv.appendChild(messageDiv);
+
+        // 显示当前tokens
+        const tokensDiv = document.createElement("div");
+        tokensDiv.innerHTML = "<h4>Current Tokens:</h4>";
+        tokensDiv.appendChild(renderNestedTokens(nestTokens(state.tokens)));
+        visualizationDiv.appendChild(tokensDiv);
+
+        // 更新步骤信息
+        stepInfo.textContent = `Step ${step + 1} of ${scannerStates.length}`;
+      }
+
+      // 切换断点
+      function toggleBreakpoint(step) {
+        if (breakpoints.has(step)) {
+          breakpoints.delete(step);
+        } else {
+          breakpoints.add(step);
+        }
+        renderStep(currentStep);
+      }
+
+      // 单步执行
+      stepBtn.onclick = () => {
+        if (currentStep < scannerStates.length - 1) {
+          currentStep++;
+          renderStep(currentStep);
+        }
+      };
+
+      // 继续执行直到断点
+      continueBtn.onclick = () => {
+        const run = () => {
+          if (currentStep < scannerStates.length - 1) {
+            currentStep++;
+            if (breakpoints.has(currentStep)) {
+              renderStep(currentStep);
+              return;
+            }
+            renderStep(currentStep);
+            setTimeout(run, 100);
+          }
+        };
+        run();
+      };
+
+      // 重置执行
+      resetBtn.onclick = () => {
+        currentStep = 0;
+        renderStep(currentStep);
+      };
+
+      // Initialize visualization when page loads
+      window.onload = visualize;
+    </script>
+  </body>
+</html>
