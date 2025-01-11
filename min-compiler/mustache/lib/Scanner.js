@@ -83,10 +83,8 @@ function parseTemplateToTokens(templateStr) {
   return nestTokens(tokens);
 }
 
-
-
 function nestTokens(tokens) {
-  console.log('tokens: ', tokens);
+  // console.log('tokens: ', tokens);
   // 结果数组
   let nestTokens = [];
   // 栈结构，存放小tokens，栈顶（靠近端口的，最新进入的）的tokens数组中当前操作的这个tokens小数组
@@ -124,10 +122,84 @@ function nestTokens(tokens) {
   return nestTokens;
 }
 
-const _tokens = parseTemplateToTokens(`<div>{{#students}}
-    {{name}}
-    {{#class}}
-        <div>{{className}}</div>
-    {{/class}}
-{{/students}}</div>`)
-console.log('tokens: ', JSON.stringify(_tokens))
+function lookup(dataObj, keyName) {
+  console.log('lookup: ', dataObj, keyName);
+  // 看看keyName中有没有点符号，但不能是.本身，{{.}}单纯.也用于解析数据
+  if (keyName.indexOf('.') != -1 && keyName != '.') {
+    // 如果有点符号，那么拆开
+    let keys = keyName.split('.');
+    // 设置一个临时变量，这个临时变量用于周转，一层一层找下去
+    let temp = { ...dataObj };
+    //  每找一层，就把他设置为新的临时变量
+    for (let i = 0; i < keys.length; i++) {
+      // 拆分属性来一层一层寻找需要的data
+      temp = temp[keys[i]];
+    }
+    return temp;
+  }
+  // 如果这里面没有点符号
+  return dataObj[keyName];
+}
+
+function parseArray(token, data) {
+  console.log('parseArray', token, data);
+  // 得到整体数据data中这个数组要使用的部分
+  let v = lookup(data, token[1]);
+  // 结果字符串
+  let resultStr = '';
+  console.log(v);
+  // 遍历v数组，v一定是数组
+  // 下面这个循环可能是整个包中最难思考的一个循环
+  // 它是遍历数据，而不是遍历tokens，数组中的数据有几条，就要遍历几条
+  for (let i = 0; i < v.length; i++) {
+    // 拼接返回，递归调用
+    // 递归调用renderTemplate
+    resultStr += renderTemplate(token[2], {
+      // 现在这个数据小对象，是v[i]的展开，就是v[i]本身
+      ...v[i],
+      // 这里要补一个"."属性并且替代当前项
+      '.': v[i]
+    });
+  }
+  // 返回的结果会加到最后结果字符串中，由于最终测试的地方是数组
+  // 因此思路要局限在数组的解析上
+  return resultStr;
+}
+
+function renderTemplate(tokens, data) {
+  let resultStr = '';
+  console.log('tokens: ', tokens, data);
+  for (let i = 0; i < tokens.length; i++) {
+    let token = tokens[i];
+    console.log('token: ', token);
+    if (token[0] == 'text') {
+      resultStr += token[1];
+    } else if (token[0] == 'name') {
+      // 如果是name类型，那么就直接使用它的值，当然要用lookup
+      // 因为防止这里是"a.b.c"有点的形式
+      resultStr += lookup(data, token[1]);
+    } else if (token[0] == '#') {
+      // 递归，解析下一层
+      // 调用parseArray函数来辅助识别token[0]='#'的token
+      resultStr += parseArray(token, data);
+    }
+  }
+  return resultStr
+
+}
+
+const _tokens = parseTemplateToTokens(`<div>{{students}}
+  {{name}}
+  {{#class}}
+  <div>{{.}}</div>
+  {{/class}}
+  {{/students}}</div>`)
+const _data = {
+  students: '123',
+  name: '啊超的煎熬',
+  class: [
+    1, 2, 3
+  ]
+}
+const domStr = renderTemplate(_tokens, _data);
+console.log('domStr: ', domStr);
