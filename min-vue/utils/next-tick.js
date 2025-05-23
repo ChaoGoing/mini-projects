@@ -1,13 +1,14 @@
 
 const callbacks = []
 let pending = false
-let timeFunc 
+let timeFunc
 
 function flushcallback(params) {
+  console.log('cb', callbacks)
   pending = false
   const copys = callbacks.slice(0)
   callbacks.length = 0
-  for(let i = 0; i < copys.length; i++) {
+  for (let i = 0; i < copys.length; i++) {
     copys[i]()
   }
 }
@@ -17,12 +18,12 @@ function isNative(Ctor) {
 }
 
 // 判断当前环境支持哪一种更新机制
-if(Promise !== undefined && isNative(Promise)) {
+if (Promise !== undefined && isNative(Promise)) {
   timeFunc = () => {
     const p = Promise.resolve()
     p.then(flushcallback)
   }
-}else {
+} else {
   timeFunc = () => {
     setTimeout(flushcallbacks)
   }
@@ -31,24 +32,23 @@ if(Promise !== undefined && isNative(Promise)) {
 function nextTick(cb, ctx) {
   let _resolve
   callbacks.push(() => {
-    if(cb) {
-      try{
+    if (cb) {
+      try {
         cb.call(ctx)
-      }catch(e) {
+      } catch (e) {
         console.log('error in nextTcik')
       }
-    }else if(_resolve) {
+    } else if (_resolve) {
       _resolve(ctx)
     }
   })
-  
-  
-  if(!pending) {
+
+  if (!pending) {
     pending = true
     timeFunc(flushcallback)
   }
 
-  if(!cb && typeof Promise !== undefined) {
+  if (!cb && typeof Promise !== undefined) {
     return new Promise(resolve => {
       _resolve = resolve
     })
@@ -56,7 +56,6 @@ function nextTick(cb, ctx) {
 
 }
 
-console.log(1)
 nextTick(() => {
   console.log(3)
   nextTick(() => {
@@ -64,4 +63,9 @@ nextTick(() => {
   })
   console.log(4)
 })
-console.log(2)
+nextTick(() => {
+  console.log('next')
+})
+nextTick().then(() => {
+  console.log("then")
+})

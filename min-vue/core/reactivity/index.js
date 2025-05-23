@@ -1,5 +1,3 @@
-
-
 let currentEffect
 class Dep {
   constructor() {
@@ -25,16 +23,16 @@ export const watchEffect = (effect) => {
 
 const targetMap = new WeakMap()
 
-export const reactive = function(raw) {
+export const reactive = function (raw) {
 
   const getDep = (target, key) => {
     let depsMap = targetMap.get(target)
-    if(!depsMap) {
+    if (!depsMap) {
       depsMap = new Map()
       targetMap.set(target, depsMap)
     }
     let dep = depsMap.get(key)
-    if(!dep) {
+    if (!dep) {
       dep = new Dep()
       depsMap.set(key, dep)
     }
@@ -56,10 +54,7 @@ export const reactive = function(raw) {
   })
 }
 
-
-
 // effect
-
 // reactive
 
 // const obj = reactive({

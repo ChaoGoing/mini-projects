@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <canvas id="matrix"></canvas>
+    <script>
+      //   const canvas = document.getElementById("matrix");
+      //   const ctx = canvas.getContext("2d");
+      //   canvas.width = window.innerWidth;
+      //   canvas.height = window.innerHeight;
+      //   const chars = "01";
+      //   const drops = Array(Math.floor(canvas.width / 20)).fill(0);
+      //   console.log("drops: ", drops);
+
+      //   function draw() {
+      //     ctx.fillStyle = "rgba(0,0,0,0.05)";
+      //     ctx.fillRect(0, 0, canvas.width, canvas.height);
+      //     ctx.fillStyle = "#0F0";
+      //     console.log("drops: ", drops);
+      //     drops.forEach((drop, i) => {
+      //       ctx.fillText(chars[Math.random() > 0.5 ? 0 : 1], i * 20, drop);
+      //       drops[i] = drop > canvas.height ? 0 : drop + 20;
+      //     });
+      //   }
+      //   setInterval(draw, 100);
+
+      const canvas = document.getElementById("matrix");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const chars = "01"; // 显示的字符
+      const columns = Math.floor(canvas.width / 20); // 列数
+      const drops = Array(columns).fill(0); // 每列的起始位置
+      const speeds = Array(columns)
+        .fill(0)
+        .map(() => Math.random() * 10 + 5); // 每列的下落速度
+
+      function draw() {
+        // 设置背景颜色并覆盖整个画布，制造渐隐效果
+        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // 设置字符颜色
+        ctx.fillStyle = "#0F0"; // 绿色
+        ctx.font = "20px monospace"; // 设置字体
+
+        // 遍历每一列
+        drops.forEach((drop, i) => {
+          // 随机选择一个字符
+          const char = chars[Math.random() > 0.5 ? 0 : 1];
+          // 绘制字符
+          ctx.fillText(char, i * 20, drop);
+          // 更新下落位置
+          drops[i] += speeds[i];
+          // 如果超出画布高度，重置位置
+          if (drops[i] > canvas.height) {
+            drops[i] = 0;
+            speeds[i] = Math.random() * 10 + 5; // 重置速度
+          }
+        });
+      }
+
+      // 每隔100毫秒调用一次draw函数
+      setInterval(draw, 100);
+    </script>
+  </body>
+</html>
