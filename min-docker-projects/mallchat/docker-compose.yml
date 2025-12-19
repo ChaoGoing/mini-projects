@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  redis:
+    build: ./redis
+    container_name: redis
+    restart: always
+    ports:
+      - 6379:6379
+    volumes:
+      - redis_data:/data
+      - redis_logs:/logs
+    command: ["redis-server","/etc/redis/redis.conf"]
+
+  mysql:
+    build: ./mysql
+    container_name: mallchat-mysql
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456 #root用户密码
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+volumes:
+  redis_data:
+  redis_logs:
+  mysql_data:
